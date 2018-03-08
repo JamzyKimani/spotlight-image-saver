@@ -1,0 +1,22 @@
+{
+  "name": "spotlight-image-saver",
+  "version": "1.0.0",
+  "description": "Savers Windows Spotlight Screen Lock background images",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JamzyKimani/spotlight-image-saver.git"
+  },
+  "author": "James Kimani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JamzyKimani/spotlight-image-saver/issues"
+  },
+  "homepage": "https://github.com/JamzyKimani/spotlight-image-saver#readme",
+  "devDependencies": {
+    "electron": "1.8.3"
+  }
+}
