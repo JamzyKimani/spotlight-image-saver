@@ -27,7 +27,25 @@ const {app, BrowserWindow, Menu} = require('electron')
       // when you should delete the corresponding element.
       win = null
     })
+    
+    var menu = Menu.buildFromTemplate([
+        {
+            label: 'Menu',
+            submenu: [
+                {label: 'Go to Images Folder'},
+                {
+                    label: 'Exit',
+                    click() {
+                        app.quit();
+                    }
+                },
+            ]
 
+        }
+    
+    ])
+
+     Menu.setApplicationMenu(menu); 
 
   }
   
