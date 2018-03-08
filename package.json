@@ -18,5 +18,8 @@
   "homepage": "https://github.com/JamzyKimani/spotlight-image-saver#readme",
   "devDependencies": {
     "electron": "1.8.3"
+  },
+  "dependencies": {
+    "username": "^3.0.0"
   }
 }
