@@ -1,18 +1,29 @@
-const {app, BrowserWindow, Menu} = require('electron')
+  const {app, BrowserWindow, Menu, ipcMain, dialog} = require('electron')
+  var fs = require('fs') 
   const path = require('path')
   const url = require('url')
+  const os = require('os');
+  const Store = require('electron-store');
+  const store = new Store();
+  const Jimp = require("jimp");
+  const probe = require('probe-image-size');
+
+  var username = os.userInfo().username;
+  var spotlightFolder = `C:/Users/${username}/AppData/Local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets`
+
   
-  // Keep a global reference of the window object, if you don't, the window will
-  // be closed automatically when the JavaScript object is garbage collected.
+  
   let win
   
   function createWindow () {
+    
+
     // Create the browser window.
     win = new BrowserWindow({width: 800, height: 600})
   
     // and load the index.html of the app.
     win.loadURL(url.format({
-      pathname: path.join(__dirname, 'index.html'),
+      pathname: path.join(__dirname, 'src/index.html'),
       protocol: 'file:',
       slashes: true
     }))
@@ -32,7 +43,9 @@ const {app, BrowserWindow, Menu} = require('electron')
         {
             label: 'Menu',
             submenu: [
-                {label: 'Go to Images Folder'},
+                {label: 'Change Images Folder'},
+                {label: 'Open Images Folder'},
+                {type: 'separator'},
                 {
                     label: 'Exit',
                     click() {
@@ -41,17 +54,17 @@ const {app, BrowserWindow, Menu} = require('electron')
                 },
             ]
 
+        }, 
+        { 
+            label: 'About'
         }
     
     ])
 
      Menu.setApplicationMenu(menu); 
 
-  }
-  
-  // This method will be called when Electron has finished
-  // initialization and is ready to create browser windows.
-  // Some APIs can only be used after this event occurs.
+  }   
+ 
   app.on('ready', createWindow)
   
   // Quit when all windows are closed.
@@ -70,6 +83,55 @@ const {app, BrowserWindow, Menu} = require('electron')
       createWindow()
     }
   })
+
+  ipcMain.on('createImagesFolder', function(event) {
+    //check if the default folder exists
+    let defaultPath = app.getPath('documents')+'/Spotlight-Images';
+    defaultPath = defaultPath.replace(/\\/g, '/'); //replaces "frontlaces" with backslashes
+
+    if(!fs.existsSync(defaultPath)) { //check if default folder already exists
+      fs.mkdirSync(defaultPath, '0o765')
+      event.returnValue = defaultPath;
+    } else { 
+      event.returnValue = defaultPath;
+    }
+
+  });
+
+
+  ipcMain.on('getFolderFiles', (event,folder) => {
+    event.returnValue = fs.readdirSync(folder);
+     
+  })
+
+
+  ipcMain.on('saveIfWallpaper', (event,file) => {
+    var response;
+    var slFolder = store.get('app-folders.spotlight-folder')
+    var imgsFolder = store.get('app-folders.images-folder')
+    var imgsFolderFiles = fs.readdirSync(imgsFolder);
+   
+      Jimp.read(`${slFolder}/${file}`)
+      .then(img => {
+        var h = img.bitmap.height;
+        var w = img.bitmap.width;
+
+        if (h<w && w>1000 && imgsFolderFiles.indexOf(`${file}.jpg`) == -1 ) { //check if image is rectangular and width is big enuf to be wallpaper
+          img.write(`${imgsFolder}/${file}.jpg`); // save file to images folder 
+          response = `{"successful" : true,  "new-image-captured" : true, "new-image" : "${file}.jpg" }`;
+          event.sender.send('saveIfWallpaper', response);
+        
+        } else {
+          response = `{"successful" : true,  "new-image-captured" : false, "new-image" : null }`;
+          event.sender.send('saveIfWallpaper', response);
+        }
+
+      })
+      .catch(err =>  {
+        response = `{"successful" : false,  "error" : "file is not an image file"}`;
+        event.sender.send('saveIfWallpaper', response);
+      })
+
+  })
   
-  // In this file you can include the rest of your app's specific main process
-  // code. You can also put them in separate files and require them here.
+ 
