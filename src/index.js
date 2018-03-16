@@ -29,15 +29,25 @@ imagesFolder = store.get('app-folders.images-folder');
 var imgsFolderFiles = ipcRenderer.sendSync('getFolderFiles', imagesFolder);
 
 var picsHTML = '';
+var imgsArea = document.getElementById('imgs-area');
+var imgDiv;
 if (imgsFolderFiles.length>0) {
     imgsFolderFiles.forEach(imageFile => {
        // picsHTML += `<div class="img-container" ><img class="gallery-img" src="${imagesFolder}/${imageFile}" /> </div>`
-        picsHTML += `<img class="gallery-img" src="${imagesFolder}/${imageFile}" > </img>`
+       // picsHTML += `<img class="gallery-img" src="${imagesFolder}/${imageFile}" > </img>`
+        // picsHTML += `<div class="gallery-img" style="background-image : url('${imagesFolder}/${imageFile}')"></div>`
+         imgDiv = document.createElement('div');
+         imgDiv.classList = "gallery-img";
+         imgDiv.style.backgroundImage = `url('${imagesFolder}/${imageFile}')`;
+         imgDiv.style.backgroundSize = "100% 100%";
+         console.log(imgDiv);
+         imgsArea.appendChild(imgDiv);
+         
     });
 
-    var imgsArea = document.getElementById('imgs-area');
-    console.log(picsHTML);
-    imgsArea.innerHTML = picsHTML;
+    
+   // console.log(picsHTML);
+    //imgsArea.innerHTML = picsHTML;
 
 } else {
     //do something if user doesn have pics
