@@ -25,6 +25,26 @@ spotlightFiles.forEach(file => {
    ipcRenderer.send('saveIfWallpaper', file);
 })
 
+imagesFolder = store.get('app-folders.images-folder');
+var imgsFolderFiles = ipcRenderer.sendSync('getFolderFiles', imagesFolder);
+
+var picsHTML = '';
+if (imgsFolderFiles.length>0) {
+    imgsFolderFiles.forEach(imageFile => {
+       // picsHTML += `<div class="img-container" ><img class="gallery-img" src="${imagesFolder}/${imageFile}" /> </div>`
+        picsHTML += `<img class="gallery-img" src="${imagesFolder}/${imageFile}" > </img>`
+    });
+
+    var imgsArea = document.getElementById('imgs-area');
+    console.log(picsHTML);
+    imgsArea.innerHTML = picsHTML;
+
+} else {
+    //do something if user doesn have pics
+}
+
+
+
 
 ipcRenderer.on('saveIfWallpaper', (event, response) => {
     console.log("anything")
