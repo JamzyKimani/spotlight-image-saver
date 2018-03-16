@@ -6,8 +6,6 @@ body{
   background-color: rgba(248, 248, 248, 0.5);
 }
 
-
-
 #imgs-area{
   margin: 0 auto;
   width:90%;
@@ -16,25 +14,22 @@ body{
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
- 
   padding: 0px 0px 20px 20px;
 
 }
 
-
-
 .gallery-img {
   transition: 0.3s;
   flex-grow: 4;
-  
   width: 240px;
- 
+  height: 180px;
   max-height: 180px;
-  
   margin-right: 20px;
   margin-top: 20px;
   background-color: black;
 }
+
+
 
 /*crude fix to a last-child flexbox issue
   prevents last child from growing to entire width;
@@ -44,8 +39,6 @@ body{
   max-width: 48%;
   min-width: 48%;
 }
-
-
 
 .gallery-img:hover {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
